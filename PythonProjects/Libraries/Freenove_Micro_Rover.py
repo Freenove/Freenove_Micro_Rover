@@ -10,8 +10,9 @@ class Micro_Rover(object):
         i2c.write(self.add, bytearray([0x00, 0x01]), repeat=False)
         sleep(5)
         i2c.write(self.add, bytearray([0x00]), repeat=False)
-        mode1 = i2c.read(self.add, 1)
-        mode1 = ustruct.unpack('<H', mode1)[0]
+        mode1s = i2c.read(self.add, 1)
+        # mode1 = ustruct.unpack('<H', mode1)[0]
+        mode1 = mode1s[0]
         mode1 = mode1 & ~0x10
         i2c.write(self.add, bytearray([0x00, mode1]), repeat=False)
         sleep(5)
