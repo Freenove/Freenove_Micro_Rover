@@ -1,7 +1,9 @@
 from microbit import *
 import math,ustruct
 from time import sleep_us,ticks_us
+import machine
 class Micro_Rover(object):
+    lastEchoDuration = 0
     def __init__(self):
         self.add = 0x43
         i2c.write(self.add, bytearray([0x00, 0x00]), repeat=False)
@@ -102,17 +104,15 @@ class Micro_Rover(object):
             self.set_pwm(2,0,0)
             self.set_pwm(3,0,0)
     def get_distance(self):
-        for i in range(5):
-            pin12.write_digital(1)
-            sleep_us(15)
-            pin12.write_digital(0)
-            while pin13.read_digital() == 0:
-                pass
-            if pin13.read_digital() == 1:
-                ts = ticks_us()
-                while pin13.read_digital() == 1:
-                    pass
-                te = ticks_us()
-                tc = te - ts
-                distance= (tc*170)*0.0001
-        return round(distance)
+        pin12.write_digital(0)
+        sleep_us(2)
+        pin12.write_digital(1)
+        sleep_us(15)
+        pin12.write_digital(0)
+
+        t = machine.time_pulse_us(pin13,1,35000)
+        if (t <= 0 and self.lastEchoDuration >= 0) :
+            t = self.lastEchoDuration
+
+        self.lastEchoDuration = t
+        return round(t * 0.017)
