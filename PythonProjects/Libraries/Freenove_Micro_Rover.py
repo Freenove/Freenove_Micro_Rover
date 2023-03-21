@@ -110,6 +110,7 @@ class Micro_Rover(object):
         sleep_us(15)
         pin12.write_digital(0)
 
+        v = pin13.read_digital() # for micro bit v1.5, may need to set Pin13 as the input mode.
         t = machine.time_pulse_us(pin13,1,35000)
         if (t <= 0 and self.lastEchoDuration >= 0) :
             t = self.lastEchoDuration
